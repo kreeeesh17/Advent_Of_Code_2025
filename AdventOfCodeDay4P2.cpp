@@ -1,0 +1,222 @@
+/**************************************
+11/12
+Author - kreeeesh_17
+Created : 10:15:25
+**************************************/
+
+#include <bits/stdc++.h>
+using namespace std;
+#define f(i, n) for (ll i = 0; i < n; i++)
+#define ll long long int
+#define inf 1000000000
+#define endl '\n'
+#define g(i, m, n) for (ll i = m; i < n; i++)
+#define vint vector<ll>
+#define ia(a, n) \
+    vint a(n);   \
+    f(i, n) cin >> a[i];
+#define asc(a) (a).begin(), (a).end()
+#define desc(a) (a).rbegin(), (a).rend()
+#define print(a)          \
+    for (auto x : (a))    \
+        cout << x << ' '; \
+    cout << endl;
+#define pb(x) push_back(x);
+#define pii pair<ll, ll>
+#define yes cout << "YES" << endl
+#define no cout << "NO" << endl
+#define debarr(a, n)            \
+    cout << #a << " : ";        \
+    for (int i = 0; i < n; i++) \
+        cout << a[i] << " ";    \
+    cout << endl;
+#define debmat(mat, row, col)         \
+    cout << #mat << " :\n";           \
+    for (int i = 0; i < row; i++)     \
+    {                                 \
+        for (int j = 0; j < col; j++) \
+            cout << mat[i][j] << " "; \
+        cout << endl;                 \
+    }
+#define pr(...) dbs(#__VA_ARGS__, __VA_ARGS)
+template <class S, class T>
+ostream &operator<<(ostream &os, const unordered_map<S, T> &p)
+{
+    os << "[ ";
+    for (auto &it : p)
+        os << it << " ";
+    return os << "]";
+}
+template <class S, class T>
+ostream &operator<<(ostream &os, const pair<S, T> &p) { return os << "(" << p.first << ", " << p.second << ")"; }
+template <class T>
+ostream &operator<<(ostream &os, const vector<T> &p)
+{
+    os << "[ ";
+    for (auto &it : p)
+        os << it << " ";
+    return os << "]";
+}
+template <class T>
+ostream &operator<<(ostream &os, const set<T> &p)
+{
+    os << "[ ";
+    for (auto &it : p)
+        os << it << " ";
+    return os << "]";
+}
+template <class T>
+ostream &operator<<(ostream &os, const multiset<T> &p)
+{
+    os << "[ ";
+    for (auto &it : p)
+        os << it << " ";
+    return os << "]";
+}
+template <class S, class T>
+ostream &operator<<(ostream &os, const map<S, T> &p)
+{
+    os << "[ ";
+    for (auto &it : p)
+        os << it << " ";
+    return os << "]";
+}
+template <class T>
+void dbs(string str, T t) { cout << str << " : " << t << "\n"; }
+template <class T, class... S>
+void dbs(string str, T t, S... s)
+{
+    int idx = str.find(',');
+    cout << str.substr(0, idx) << " : " << t << ",";
+    dbs(str.substr(idx + 1), s...);
+}
+template <class T>
+void prc(T a, T b)
+{
+    cout << "[";
+    for (T i = a; i != b; ++i)
+    {
+        if (i != a)
+            cout << ", ";
+        cout << *i;
+    }
+    cout << "]\n";
+}
+ll mod = 1e9 + 7;
+ll power(ll a, ll b)
+{
+    if (b == 0)
+        return 1;
+    if (b % 2)
+        return a * power(a, b - 1) % mod;
+    else
+    {
+        ll x = power(a, b / 2);
+        return (x * x) % mod;
+    }
+}
+ll inverse(ll x) { return power(x, mod - 2); }
+ll dx[] = {1, 0, -1, 0, 1, 1, -1, -1};
+ll dy[] = {0, 1, 0, -1, 1, -1, 1, -1};
+/********************************************************************************************************************************************************************************************/
+
+void solve()
+{
+    vector<string> a;
+    string s;
+    while (cin >> s)
+    {
+        a.push_back(s);
+    }
+    ll n = a.size(), m = a[0].size();
+    ll count = 0;
+    vector<vint> neigh(n, vint(m, 0)), vis(n, vint(m, 0));
+    f(i, n)
+    {
+        f(j, m)
+        {
+            if (a[i][j] == '@')
+            {
+                vis[i][j] = 1;
+            }
+        }
+    }
+    f(i, n)
+    {
+        f(j, m)
+        {
+            if (vis[i][j])
+            {
+                ll cnt = 0;
+                f(k, 8)
+                {
+                    ll nx = i + dx[k];
+                    ll ny = j + dy[k];
+                    if (nx >= 0 && ny >= 0 && nx < n && ny < m && vis[nx][ny])
+                    {
+                        cnt++;
+                    }
+                }
+                neigh[i][j] = cnt;
+            }
+        }
+    }
+    queue<pair<ll, ll>> q;
+    f(i, n)
+    {
+        f(j, m)
+        {
+            if (vis[i][j] && neigh[i][j] < 4)
+            {
+                q.push({i, j});
+            }
+        }
+    }
+    while (!q.empty())
+    {
+        pair<ll, ll> curr = q.front();
+        q.pop();
+        ll x = curr.first;
+        ll y = curr.second;
+        if (!vis[x][y] || neigh[x][y] >= 4)
+        {
+            continue;
+        }
+        vis[x][y] = 0;
+        a[x][y] = '.';
+        count++;
+        f(k, 8)
+        {
+            ll nx = x + dx[k];
+            ll ny = y + dy[k];
+            if (nx >= 0 && ny >= 0 & nx < n && ny < m && vis[nx][ny])
+            {
+                neigh[nx][ny]--;
+                if (neigh[nx][ny] < 4)
+                {
+                    q.push({nx, ny});
+                }
+            }
+        }
+    }
+    cout << count << endl;
+}
+int32_t main()
+{
+    ios_base::sync_with_stdio(false);
+    cin.tie(NULL);
+    cout.tie(NULL);
+    // #ifndef ONLINE_JUDGE
+    //   freopen("AdventOfCode2025Day4_input.txt","r",stdin);
+    //   freopen("AdventOfCode2025Day4_output.txt","w",stdout);
+    // #endif
+    ll t;
+    t = 1;
+    // cin >> t;
+    g(i, 1, t + 1)
+    {
+        // cout<<"Case #"<<i<<": ";
+        solve();
+    }
+    return 0;
+}
